@@ -2,27 +2,52 @@
 const {app, BrowserWindow} = require('electron')
 const path = require('path')
 
+let splash = null
 function createWindow () {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  let mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+    webPreferences : {
+      nodeIntegration : true,
+      devTools : false
     }
+    // webPreferences: {
+    //   preload: path.join(__dirname, 'preload.js')
+    // }
   })
 
   // and load the index.html of the app.
   mainWindow.loadFile('index.html')
+  mainWindow.maximize()
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
 }
 
+function createSplashScreen() {
+  splash = new BrowserWindow({
+    width : 500,
+    height : 400,
+    frame : false,
+    transparent: true,
+  })
+
+  splash.loadFile('splash.html')
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.on('ready', () => {
+  setTimeout(createSplashScreen, 1000)
+
+  setTimeout(() => {
+    //splash.close()
+    createWindow()
+    splash.close()
+  }, 10000)
+})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
